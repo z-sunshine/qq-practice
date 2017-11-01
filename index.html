@@ -1,9 +1,46 @@
-�˸���Ļ��û����� 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <button> click </button>
+    <script>
+        // 调用它完成 jsonp 获得数据
+        function jsonp( url, fn ) {
+            // 构造一个函数到 window 上
+            var fnName = '__jsonpFn' + Math.random().toString().replace( '.', '' );
 
-С�����л�û�����
+            // 创建 script 标签
+            var script = document.createElement( 'script' ),
+                // 获得 页面的 head 标签
+                head = document.head;
+            // 设置 script 标签请求的 src, 记得带有参数
+            script.src = url + "?callback=" + fnName;
 
+            // 先绑定函数, 再请求更加安全
+            window[ fnName ] = function ( data ) { // 发回数据调用的内容
+                fn( data ); // 用户写的函数
+                // 表示函数执行结束, 可以考虑删除内容
+                
+                delete window[ fnName ];
+                head.removeChild( script );
+            };
+            
+            // 将 script 标签加到 页面中, 浏览器就会自动的请求下载 js 格式的字符串
+            head.appendChild( script );
+        }
+        
+        document.querySelector( 'button' ).onclick = function () {
 
+            jsonp( 'http://website2.com/01-index.php', function ( data ) {
+                console.log( data );
+            });
 
-
-�ݽ�׼��
-css�е�ѡ����
+        };
+    </script>
+</body>
+</html>
